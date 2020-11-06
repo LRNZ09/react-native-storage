@@ -3,7 +3,7 @@ module.exports = {
 		commitMessage: 'chore: release ${version}',
 		requireBranch: 'main',
 		requireCleanWorkingDir: false,
-		// requireCommits: true,
+		requireCommits: true,
 		tagName: 'v${version}',
 	},
 	npm: {

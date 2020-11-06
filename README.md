@@ -8,14 +8,20 @@ Wrapper for AsyncStorage with memory cache
 npm install @lrnz09/react-native-storage
 ```
 
+or
+
+```sh
+yarn add @lrnz09/react-native-storage
+```
+
 ## Usage
 
-```js
-import ReactNativeStorage from '@lrnz09/react-native-storage'
+```ts
+import Storage from '@lrnz09/react-native-storage'
 
 // ...
 
-const result = await ReactNativeStorage.multiply(3, 7)
+const item = await Storage.getItem<number>('foobar')
 ```
 
 ## Contributing

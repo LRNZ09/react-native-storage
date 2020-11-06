@@ -93,4 +93,4 @@ class Storage {
 	}
 }
 
-export { Storage as default, Storage }
+export default Storage
