@@ -17,11 +17,19 @@ yarn add @lrnz09/react-native-storage
 ## Usage
 
 ```ts
-import Storage from '@lrnz09/react-native-storage'
+import { Storage } from '@lrnz09/react-native-storage'
 
 // ...
 
 const item = await Storage.getItem<number>('foobar')
+```
+or
+```ts
+import { useStorage } from '@lrnz09/react-native-storage'
+
+// ...
+
+const [item, setItem] = useStorage<number>('foobar')
 ```
 
 ## Contributing

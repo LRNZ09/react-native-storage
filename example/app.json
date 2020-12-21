@@ -1,16 +1,32 @@
 {
-	"name": "@lrnz09/react-native-storage-example",
-	"displayName": "ReactNativeStorage Example",
-	"expo": {
-		"name": "@lrnz09/react-native-storage-example",
-		"slug": "lrnz09-react-native-storage-example",
-		"description": "Example app for @lrnz09/react-native-storage",
-		"privacy": "public",
-		"version": "1.0.0",
-		"platforms": ["ios", "android", "web"],
-		"ios": {
-			"supportsTablet": true
-		},
-		"assetBundlePatterns": ["**/*"]
-	}
+  "expo": {
+    "name": "@lrnz09/react-native-storage-example",
+    "slug": "lrnz09-react-native-storage-example",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
 }

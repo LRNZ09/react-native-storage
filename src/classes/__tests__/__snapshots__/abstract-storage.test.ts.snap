@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AbstractStorage should not be instantiable 1`] = `"[@lrnz09/react-native-storage]: Storage is not instantiable."`;
