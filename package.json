@@ -1,6 +1,6 @@
 {
 	"name": "@lrnz09/react-native-storage",
-	"version": "0.2.1",
+	"version": "1.0.0",
 	"description": "JSON parsing for AsyncStorage with optional in-memory cache and auto-dispatch hook",
 	"main": "lib/commonjs/index.js",
 	"module": "lib/module/index.js",
