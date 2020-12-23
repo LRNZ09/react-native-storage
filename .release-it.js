@@ -6,6 +6,7 @@ module.exports = {
 		requireCommits: true,
 		tagName: 'v${version}',
 	},
+	increment: false,
 	npm: {
 		publish: true,
 	},
