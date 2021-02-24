@@ -6,4 +6,4 @@ abstract class AbstractStorage {
 	}
 }
 
-export { AbstractStorage }
+export default AbstractStorage

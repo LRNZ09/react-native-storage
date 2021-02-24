@@ -1,4 +1,4 @@
-import { AbstractStorage } from '../abstract-storage'
+import AbstractStorage from '../abstract-storage'
 
 class FakeStorage extends AbstractStorage {
 	static getInstance = () => new FakeStorage()

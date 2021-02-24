@@ -1,106 +1,51 @@
-import { renderHook, act } from '@testing-library/react-hooks'
+import { renderHook } from '@testing-library/react-hooks'
 
-import { useBaseStorage, useInMemoryCacheStorage } from '..'
+import { useStorage } from '..'
 import { BaseStorage } from '../../classes'
 
-const ITEM_KEY = '@testItemKey'
-const NULL_ITEM_KEY = '@testNullItemKey'
+const ITEM_KEY = '@foobar'
 
-describe('useBaseStorage', () => {
+describe('useStorage', () => {
 	beforeEach(async () => {
-		await BaseStorage.setItem(ITEM_KEY, 12)
+		await BaseStorage.setItem(ITEM_KEY, { foo: 1 })
 	})
 
 	afterEach(async () => {
 		await BaseStorage.clear()
 	})
 
-	test('should return null if item does not exist', async () => {
-		const { result, waitForValueToChange } = renderHook(() =>
-			useBaseStorage(NULL_ITEM_KEY),
-		)
+	test('should return functions for a given item key', () => {
+		const { result } = renderHook(() => useStorage(ITEM_KEY))
 
-		await waitForValueToChange(() => result.current[0])
-
-		expect(result.current[0]).toBeNull()
+		expect(result.current).toMatchSnapshot()
 	})
 
-	test('should return item from storage', async () => {
-		const { result, waitForValueToChange } = renderHook(() =>
-			useBaseStorage(ITEM_KEY),
-		)
+	test('should get item from hook function', async () => {
+		const { result } = renderHook(() => useStorage(ITEM_KEY))
 
-		await waitForValueToChange(() => result.current[0])
-
-		expect(result.current[0]).toBe(12)
+		expect(await result.current.getItem()).toEqual({ foo: 1 })
 	})
 
-	test('should not set default value if item exists already', async () => {
-		const { result, waitForValueToChange } = renderHook(() =>
-			useBaseStorage(ITEM_KEY, 34),
-		)
+	test('should set item from hook function', async () => {
+		const { result } = renderHook(() => useStorage<{ bar: number }>(ITEM_KEY))
 
-		await waitForValueToChange(() => result.current[0])
-
-		expect(result.current[0]).toBe(12)
+		expect(await result.current.setItem({ bar: 42 })).toBeUndefined()
+		expect(await result.current.getItem()).toEqual({ bar: 42 })
 	})
 
-	test('should set default value if item does not exist', async () => {
-		const { result, waitForValueToChange } = renderHook(() =>
-			useBaseStorage(NULL_ITEM_KEY, 34),
+	test('should merge item from hook function', async () => {
+		const { result } = renderHook(() =>
+			useStorage<{ foo: number; bar: number }>(ITEM_KEY),
 		)
 
-		await waitForValueToChange(() => result.current[0])
-
-		expect(result.current[0]).toBe(34)
+		expect(await result.current.mergeItem({ bar: 42 })).toBeUndefined()
+		expect(await result.current.getItem()).toEqual({ foo: 1, bar: 42 })
 	})
 
-	test('should not set default value on remove', async () => {
-		const { result, waitForValueToChange } = renderHook(() =>
-			useBaseStorage(NULL_ITEM_KEY, 56),
-		)
+	test('should remove item from hook function', async () => {
+		const { result } = renderHook(() => useStorage(ITEM_KEY))
 
-		await waitForValueToChange(() => result.current[0])
-		await act(async () => {
-			await result.current[1](null)
-		})
-
-		expect(result.current[0]).toBeNull()
-	})
-
-	test('should set item to storage', async () => {
-		const { result, waitForValueToChange } = renderHook(() =>
-			useBaseStorage(ITEM_KEY),
-		)
-
-		await waitForValueToChange(() => result.current[0])
-		await act(async () => {
-			await result.current[1](0)
-		})
-
-		expect(result.current[0]).toBe(0)
-	})
-
-	test('should remove item from storage', async () => {
-		const { result, waitForValueToChange } = renderHook(() =>
-			useBaseStorage(ITEM_KEY),
-		)
-
-		await waitForValueToChange(() => result.current[0])
-		await act(async () => {
-			await result.current[1](null)
-		})
-
-		expect(result.current[0]).toBeNull()
-	})
-
-	test('should work with in memory cache', async () => {
-		const { result, waitForValueToChange } = renderHook(() =>
-			useInMemoryCacheStorage(ITEM_KEY),
-		)
-
-		await waitForValueToChange(() => result.current[0])
-
-		expect(result.current[0]).toBe(12)
+		expect(await result.current.removeItem()).toBeUndefined()
+		expect(await result.current.getItem()).toBeNull()
 	})
 })

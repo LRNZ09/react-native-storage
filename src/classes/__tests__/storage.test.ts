@@ -1,24 +1,23 @@
-import { BaseStorage, InMemoryCacheStorage } from '..'
+import { BaseStorage, Storage } from '..'
 
 const EMPTY_RECORD_ITEM_KEY = '@testEmptyObjectItemKey'
 const NOT_CACHED_ITEM_KEY = '@testNotInMemoryCacheItemKey'
 const RECORD_ITEM_KEY = '@testObjectItemKey'
 
+// eslint-disable-next-line unicorn/no-array-for-each
 Object.entries(BaseStorage).forEach(([key, value]) => {
 	if (typeof value === 'function')
 		jest.spyOn(BaseStorage, key as keyof BaseStorage)
 })
 
-describe('InMemoryCacheStorage', () => {
+describe('Storage', () => {
 	beforeEach(async () => {
 		await Promise.all([
 			// Only storage
 			BaseStorage.setItem(NOT_CACHED_ITEM_KEY, { baz: 'qux' }),
 
 			// Storage and memory
-			InMemoryCacheStorage.multiSet<
-				boolean | number | string | Record<string, unknown>
-			>([
+			Storage.multiSet<boolean | number | string | Record<string, unknown>>([
 				[EMPTY_RECORD_ITEM_KEY, {}],
 				[RECORD_ITEM_KEY, { foo: 'bar' }],
 			]),
@@ -26,18 +25,18 @@ describe('InMemoryCacheStorage', () => {
 	})
 
 	afterEach(async () => {
-		await InMemoryCacheStorage.clear()
+		await Storage.clear()
 	})
 
 	test('should get an item from cache', async () => {
-		const value = await InMemoryCacheStorage.getItem(RECORD_ITEM_KEY)
+		const value = await Storage.getItem(RECORD_ITEM_KEY)
 
 		expect(BaseStorage.getItem).toHaveBeenCalledTimes(0)
 		expect(value).toStrictEqual({ foo: 'bar' })
 	})
 
 	test('should get item from storage if not in cache', async () => {
-		const value = await InMemoryCacheStorage.getItem(NOT_CACHED_ITEM_KEY)
+		const value = await Storage.getItem(NOT_CACHED_ITEM_KEY)
 
 		expect(BaseStorage.getItem).toHaveBeenCalledTimes(1)
 		expect(BaseStorage.getItem).toHaveBeenCalledWith(NOT_CACHED_ITEM_KEY)
@@ -45,8 +44,8 @@ describe('InMemoryCacheStorage', () => {
 	})
 
 	test('should set an item in cache', async () => {
-		await InMemoryCacheStorage.setItem(NOT_CACHED_ITEM_KEY, 42)
-		const value = await InMemoryCacheStorage.getItem(NOT_CACHED_ITEM_KEY)
+		await Storage.setItem(NOT_CACHED_ITEM_KEY, 42)
+		const value = await Storage.getItem(NOT_CACHED_ITEM_KEY)
 
 		// * it includes the call in before each
 		expect(BaseStorage.setItem).toHaveBeenCalledTimes(2)
@@ -59,8 +58,8 @@ describe('InMemoryCacheStorage', () => {
 	})
 
 	test('should merge an item in cache', async () => {
-		await InMemoryCacheStorage.mergeItem(RECORD_ITEM_KEY, { qux: 0 })
-		const value = await InMemoryCacheStorage.getItem(RECORD_ITEM_KEY)
+		await Storage.mergeItem(RECORD_ITEM_KEY, { qux: 0 })
+		const value = await Storage.getItem(RECORD_ITEM_KEY)
 
 		expect(BaseStorage.mergeItem).toHaveBeenCalledTimes(1)
 		expect(BaseStorage.mergeItem).toHaveBeenCalledWith(RECORD_ITEM_KEY, {
@@ -72,8 +71,8 @@ describe('InMemoryCacheStorage', () => {
 	})
 
 	test('should remove an item from cache', async () => {
-		await InMemoryCacheStorage.removeItem(RECORD_ITEM_KEY)
-		const newValue = await InMemoryCacheStorage.getItem(RECORD_ITEM_KEY)
+		await Storage.removeItem(RECORD_ITEM_KEY)
+		const newValue = await Storage.getItem(RECORD_ITEM_KEY)
 
 		expect(BaseStorage.removeItem).toHaveBeenCalledTimes(1)
 		expect(BaseStorage.removeItem).toHaveBeenCalledWith(RECORD_ITEM_KEY)
@@ -83,7 +82,7 @@ describe('InMemoryCacheStorage', () => {
 	})
 
 	test('should get multiple items from cache', async () => {
-		const values = await InMemoryCacheStorage.multiGet([
+		const values = await Storage.multiGet([
 			EMPTY_RECORD_ITEM_KEY,
 			RECORD_ITEM_KEY,
 		])
@@ -100,7 +99,7 @@ describe('InMemoryCacheStorage', () => {
 		const yetAnotherItemKey = '@bazqux'
 		await BaseStorage.setItem(anotherItemKey, 42)
 
-		const values = await InMemoryCacheStorage.multiGet([
+		const values = await Storage.multiGet([
 			NOT_CACHED_ITEM_KEY,
 			anotherItemKey,
 			yetAnotherItemKey,
@@ -120,11 +119,11 @@ describe('InMemoryCacheStorage', () => {
 	})
 
 	test('should set multiple items in cache', async () => {
-		await InMemoryCacheStorage.multiSet([
+		await Storage.multiSet([
 			[EMPTY_RECORD_ITEM_KEY, { waldo: 'fred' }],
 			[RECORD_ITEM_KEY, { baz: 'qux' }],
 		])
-		const values = await InMemoryCacheStorage.multiGet([
+		const values = await Storage.multiGet([
 			EMPTY_RECORD_ITEM_KEY,
 			RECORD_ITEM_KEY,
 		])
@@ -142,11 +141,11 @@ describe('InMemoryCacheStorage', () => {
 	})
 
 	test('should merge multiple items in cache', async () => {
-		await InMemoryCacheStorage.multiMerge([
+		await Storage.multiMerge([
 			[EMPTY_RECORD_ITEM_KEY, { baz: 'qux' }],
 			[RECORD_ITEM_KEY, { waldo: 'fred' }],
 		])
-		const values = await InMemoryCacheStorage.multiGet([
+		const values = await Storage.multiGet([
 			EMPTY_RECORD_ITEM_KEY,
 			RECORD_ITEM_KEY,
 		])
@@ -168,11 +167,8 @@ describe('InMemoryCacheStorage', () => {
 	})
 
 	test('should remove multiple items from cache', async () => {
-		await InMemoryCacheStorage.multiRemove([
-			EMPTY_RECORD_ITEM_KEY,
-			RECORD_ITEM_KEY,
-		])
-		const values = await InMemoryCacheStorage.multiGet([
+		await Storage.multiRemove([EMPTY_RECORD_ITEM_KEY, RECORD_ITEM_KEY])
+		const values = await Storage.multiGet([
 			EMPTY_RECORD_ITEM_KEY,
 			RECORD_ITEM_KEY,
 		])
@@ -184,8 +180,8 @@ describe('InMemoryCacheStorage', () => {
 	})
 
 	test('should clear both cache and storage', async () => {
-		await InMemoryCacheStorage.clear()
-		const keys = await InMemoryCacheStorage.getAllKeys()
+		await Storage.clear()
+		const keys = await Storage.getAllKeys()
 
 		expect(BaseStorage.clear).toHaveBeenCalledTimes(1)
 		expect(BaseStorage.getAllKeys).toHaveBeenCalledTimes(1)

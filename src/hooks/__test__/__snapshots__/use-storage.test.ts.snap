@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`useStorage should return functions for a given item key 1`] = `
+Object {
+  "getItem": [Function],
+  "mergeItem": [Function],
+  "removeItem": [Function],
+  "setItem": [Function],
+}
+`;

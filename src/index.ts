@@ -1,2 +1,2 @@
-export { BaseStorage, InMemoryCacheStorage } from './classes'
-export { useBaseStorage, useInMemoryCacheStorage } from './hooks'
+export { Storage } from './classes'
+export { useStorage } from './hooks'

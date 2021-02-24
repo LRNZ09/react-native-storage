@@ -16,4 +16,4 @@ interface StorageStatic {
 	setItem: <T>(key: string, value: T) => Promise<void>
 }
 
-export { StorageStatic }
+export default StorageStatic

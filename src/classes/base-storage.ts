@@ -7,7 +7,7 @@ import {
 	stringifyEntries,
 } from '../utils'
 
-import { AbstractStorage } from './abstract-storage'
+import AbstractStorage from './abstract-storage'
 
 // https://github.com/microsoft/TypeScript/issues/33892
 
@@ -62,4 +62,4 @@ class BaseStorage extends AbstractStorage /* implements StorageStatic */ {
 		AsyncStorage.setItem(key, stringifyValue<T>(value))
 }
 
-export { BaseStorage }
+export default BaseStorage
